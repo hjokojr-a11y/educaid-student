@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EducAid — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--green:#1B5E3B;--green-light:#EAF2EC;--navy:#0C1F4A;--navy-light:#E8EDF8;--white:#FFFFFF;--canvas:#F7F8F5;--grey:#6B7280;--grey-mid:#9CA3AF;--border:#D1D5DB;--red:#B91C1C;--red-light:#FEE2E2;--amber:#B45309;--amber-light:#FEF3C7;--purple:#6D28D9;--teal:#0E7490;--black:#0A0C10;--shadow:rgba(12,31,74,0.08);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--canvas);color:var(--black);min-height:100vh;}
+  .hide{display:none!important;}
+
+  /* Login */
+  #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#0C1F4A 0%,#1B5E3B 100%);}
+  .login-card{background:var(--white);border-radius:24px;padding:48px 40px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  .login-logo{width:64px;height:64px;background:var(--navy);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;}
+  .login-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);text-align:center;margin-bottom:6px;}
+  .login-sub{font-size:13px;color:var(--grey);text-align:center;margin-bottom:32px;}
+  .lbl{font-size:10px;font-weight:700;color:var(--grey);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;display:block;}
+  .inp{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--canvas);color:var(--black);outline:none;transition:border-color 0.2s;margin-bottom:20px;}
+  .inp:focus{border-color:var(--navy);background:var(--white);}
+  .btn-primary{width:100%;padding:16px;background:var(--navy);color:var(--white);border-radius:14px;font-size:16px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(12,31,74,0.28);transition:all 0.2s;}
+  .btn-primary:hover{opacity:0.9;transform:translateY(-1px);}
+  .school-pill{background:var(--white);border-radius:12px;padding:14px;margin-bottom:24px;border:1px solid var(--border);border-left:4px solid var(--green);display:flex;align-items:center;cursor:pointer;transition:all 0.2s;}
+  .school-pill:hover{box-shadow:0 2px 8px var(--shadow);}
+  .school-pill-name{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+  .school-pill-sub{font-size:12px;color:var(--grey);}
+  .pick-school-btn{width:100%;padding:16px;background:var(--white);border:1.5px solid var(--border);border-radius:12px;color:var(--grey);font-size:14px;font-weight:600;cursor:pointer;margin-bottom:24px;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+  .pick-school-btn:hover{border-color:var(--navy);color:var(--navy);}
+
+  /* School picker */
+  #schoolScreen{display:none;min-height:100vh;background:linear-gradient(135deg,#0C1F4A 0%,#1B5E3B 100%);padding:24px;}
+  .back-link{display:inline-flex;align-items:center;gap:6px;color:rgba(255,255,255,0.7);font-size:13px;font-weight:600;cursor:pointer;margin-bottom:24px;padding:8px 12px;background:rgba(255,255,255,0.1);border-radius:10px;border:1px solid rgba(255,255,255,0.2);}
+  .page-title{font-family:'DM Serif Display',serif;font-size:28px;color:var(--white);margin-bottom:6px;}
+  .page-sub{font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:28px;}
+  .school-card{display:flex;align-items:center;background:rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid rgba(255,255,255,0.15);cursor:pointer;transition:all 0.2s;gap:14px;}
+  .school-card:hover{background:rgba(255,255,255,0.15);}
+  .school-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+  .school-card-name{font-size:15px;font-weight:700;color:var(--white);margin-bottom:2px;}
+  .school-card-sub{font-size:12px;color:rgba(255,255,255,0.6);}
+
+  /* Dashboard */
+  #dashboard{display:none;min-height:100vh;}
+  .dash-header{background:var(--white);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px var(--shadow);}
+  .hdr-avatar{width:44px;height:44px;border-radius:14px;background:var(--navy);display:flex;align-items:center;justify-content:center;color:var(--white);font-weight:900;font-size:15px;flex-shrink:0;}
+  .hdr-name{font-size:15px;font-weight:700;color:var(--navy);}
+  .hdr-sub{font-size:11px;color:var(--grey);margin-top:2px;}
+  .hdr-signout{margin-left:auto;padding:8px 12px;background:var(--canvas);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--grey);cursor:pointer;transition:all 0.2s;white-space:nowrap;border:none;}
+  .hdr-signout:hover{background:var(--red-light);color:var(--red);}
+  .id-strip{padding:8px 16px;border-bottom:1px solid var(--border);background:var(--green-light);}
+  .id-txt{font-size:11px;font-weight:700;color:var(--green);letter-spacing:0.5px;}
+
+  /* Pill tab bar */
+  .tab-bar{background:var(--white);border-bottom:1px solid var(--border);padding:10px 0;overflow-x:auto;white-space:nowrap;scrollbar-width:none;}
+  .tab-bar::-webkit-scrollbar{display:none;}
+  .tab-inner{padding:0 16px;display:inline-flex;gap:8px;}
+  .tab-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 12px;border-radius:20px;background:var(--canvas);border:1.5px solid var(--border);font-size:12px;font-weight:600;color:var(--grey);cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+  .tab-pill:hover{border-color:var(--navy);color:var(--navy);}
+  .tab-pill.active{color:var(--white);border-color:transparent;}
+
+  .dash-content{padding:16px;max-width:800px;margin:0 auto;}
+  .sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:4px;}
+  .sec-head-txt{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;}
+  .sec-head-line{flex:1;height:1.5px;border-radius:1px;}
+
+  /* Stats grid */
+  .stats-grid{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+  .stat-card{width:calc(33.33% - 7px);background:var(--white);border-radius:14px;padding:14px;border:1px solid var(--border);border-top:3px solid;text-align:center;cursor:pointer;transition:all 0.2s;}
+  .stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px var(--shadow);}
+  .stat-count{font-size:26px;font-weight:900;margin-bottom:4px;}
+  .stat-label{font-size:10px;color:var(--grey);font-weight:600;}
+
+  /* Data cards */
+  .data-card{display:flex;align-items:center;background:var(--white);border-radius:12px;padding:14px;margin-bottom:8px;border:1px solid var(--border);border-left:3px solid;gap:12px;}
+  .card-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:2px;}
+  .card-sub{font-size:11px;color:var(--grey);}
+  .card-note{font-size:12px;color:#374151;margin-top:4px;line-height:1.5;}
+  .badge{padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;border:1px solid;}
+  .grade-box{background:var(--navy-light);border-radius:10px;padding:10px;text-align:center;min-width:52px;flex-shrink:0;}
+  .grade-num{font-size:18px;font-weight:900;color:var(--navy);}
+  .grade-letter{font-size:11px;color:var(--grey);margin-top:2px;}
+
+  .empty-state{text-align:center;padding:48px;background:var(--white);border-radius:14px;border:1px solid var(--border);margin-top:8px;}
+  .empty-icon{font-size:36px;margin-bottom:12px;}
+  .empty-txt{color:var(--grey);font-size:13px;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:var(--white);padding:12px 24px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.2);}
+  .toast.err{background:var(--red);}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin 0.8s linear infinite;margin:40px auto;}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:480px){.login-card{padding:32px 20px;}.stat-card{width:calc(33.33% - 7px);}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<!-- SCHOOL PICKER -->
+<div id="schoolScreen">
+  <div class="back-link" onclick="showLogin()">← Back</div>
+  <h1 class="page-title">Select School</h1>
+  <p class="page-sub">Choose your institution to continue</p>
+  <div id="schoolList"><div class="spinner"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🎓</div>
+    <h1 class="login-title">Student Portal</h1>
+    <p class="login-sub">Sign in to view your academic records</p>
+
+    <div id="schoolPillWrap">
+      <button class="pick-school-btn" onclick="showSchoolPicker()">🏫  Select Your School</button>
+    </div>
+
+    <label class="lbl">Student ID</label>
+    <input id="lCode" class="inp" placeholder="e.g. LYC-0002" autocomplete="username">
+    <label class="lbl">Password</label>
+    <input id="lPwd" class="inp" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="dash-header">
+    <div class="hdr-avatar" id="hAvatar">?</div>
+    <div>
+      <div class="hdr-name" id="hName"></div>
+      <div class="hdr-sub" id="hSub"></div>
+    </div>
+    <button class="hdr-signout" onclick="signOut()">Sign Out</button>
+  </div>
+  <div class="id-strip"><span class="id-txt" id="hId"></span></div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab-inner">
+      <div class="tab-pill active" id="pill-home" style="background:#0C1F4A" onclick="showTab('home')">⊞ Overview</div>
+      <div class="tab-pill" id="pill-attendance" onclick="showTab('attendance')">📅 Attendance</div>
+      <div class="tab-pill" id="pill-academic" onclick="showTab('academic')">📚 Grades</div>
+      <div class="tab-pill" id="pill-homework" onclick="showTab('homework')">📝 Homework</div>
+      <div class="tab-pill" id="pill-sports" onclick="showTab('sports')">🏃 Sports</div>
+      <div class="tab-pill" id="pill-announce" onclick="showTab('announce')">📢 News</div>
+      <div class="tab-pill" id="pill-alerts" onclick="showTab('alerts')">🚨 Alerts</div>
+      <div class="tab-pill" id="pill-timetable" onclick="showTab('timetable')">🗓️ Timetable</div>
+    </div>
+  </div>
+
+  <div class="dash-content" id="dashContent">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<script>
+const API='https://elegant-eagerness-production-2114.up.railway.app';
+const TAB_COLORS={home:'#0C1F4A',attendance:'#1B5E3B',academic:'#0C1F4A',homework:'#6D28D9',sports:'#B45309',announce:'#0E7490',alerts:'#B91C1C',timetable:'#1D4ED8'};
+let token='',user=null,selSchool=null,data={attendance:[],academic:[],homework:[],sports:[],announce:[],alerts:[],timetable:[]};
+let refreshTimer=null;
+
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;t.style.display='block';setTimeout(()=>t.style.display='none',3500);}
+
+function saveSession(){try{localStorage.setItem('st_s',JSON.stringify({token,user,selSchool}));}catch{}}
+function loadSession(){
+  try{
+    const s=localStorage.getItem('st_s');
+    if(s){const{token:t,user:u,selSchool:sc}=JSON.parse(s);token=t;user=u;selSchool=sc;showDash();loadAllData();return true;}
+  }catch{}return false;
+}
+
+async function loadSchools(){
+  try{
+    const r1=await fetch(`${API}/auth/super/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'hjokojr@gmail.com',password:'EducAid2024!'})});
+    const auth=await r1.json();
+    const r2=await fetch(`${API}/auth/super/schools`,{headers:{Authorization:`Bearer ${auth.token}`}});
+    const d=await r2.json();
+    const schools=d.schools||[];
+    const list=document.getElementById('schoolList');
+    list.innerHTML=schools.length===0?'<p style="color:rgba(255,255,255,0.5);text-align:center;padding:40px">No schools registered yet.</p>':schools.map(s=>`<div class="school-card" onclick="selectSchool('${s.id}','${s.name}','${s.category||''}','${s.theme_primary||'#1B5E3B'}')"><div class="school-dot" style="background:${s.theme_primary||'#1B5E3B'}"></div><div style="flex:1"><div class="school-card-name">${s.name}</div><div class="school-card-sub">${s.category||''}</div></div><div style="color:rgba(255,255,255,0.4);font-size:20px">›</div></div>`).join('');
+  }catch{document.getElementById('schoolList').innerHTML='<p style="color:rgba(255,255,255,0.5);text-align:center;padding:40px">Cannot connect to server.</p>';}
+}
+
+function showSchoolPicker(){document.getElementById('loginScreen').style.display='none';document.getElementById('schoolScreen').style.display='block';loadSchools();}
+function showLogin(){document.getElementById('schoolScreen').style.display='none';document.getElementById('loginScreen').style.display='flex';}
+function selectSchool(id,name,cat,color){
+  selSchool={id,name,cat,color};
+  document.getElementById('schoolPillWrap').innerHTML=`<div class="school-pill" onclick="showSchoolPicker()"><div style="flex:1"><div class="school-pill-name">${name}</div><div class="school-pill-sub">${cat}</div></div><span style="color:var(--grey);font-size:12px">Change →</span></div>`;
+  showLogin();
+}
+
+async function doLogin(){
+  const code=document.getElementById('lCode').value,pw=document.getElementById('lPwd').value;
+  if(!selSchool){showToast('Please select your school first','err');return;}
+  if(!code||!pw){showToast('Enter your Student ID and password','err');return;}
+  try{
+    const r=await fetch(`${API}/auth/student/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({studentCode:code,password:pw,schoolId:selSchool.id})});
+    const d=await r.json();
+    if(!r.ok){showToast(d.error||'Invalid credentials','err');return;}
+    token=d.token;user=d.user;
+    saveSession();showDash();loadAllData();
+  }catch{showToast('Cannot connect to server','err');}
+}
+
+function showDash(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('schoolScreen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  const initials=user?.name?.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';
+  document.getElementById('hAvatar').textContent=initials;
+  document.getElementById('hName').textContent=user?.name||'';
+  document.getElementById('hSub').textContent=(user?.class?.name||'')+(user?.school?.name?' · '+user.school.name:'');
+  document.getElementById('hId').textContent='Student ID: '+(user?.studentCode||'');
+  if(refreshTimer)clearInterval(refreshTimer);
+  refreshTimer=setInterval(loadAllData,30000);
+}
+
+function signOut(){
+  token='';user=null;
+  try{localStorage.removeItem('st_s');}catch{}
+  if(refreshTimer)clearInterval(refreshTimer);
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('schoolPillWrap').innerHTML='<button class="pick-school-btn" onclick="showSchoolPicker()">🏫  Select Your School</button>';
+  selSchool=null;
+  document.getElementById('lCode').value='';
+  document.getElementById('lPwd').value='';
+}
+
+async function loadAllData(){
+  const h={Authorization:`Bearer ${token}`},id=user?.id;
+  if(!id)return;
+  try{
+    const [a,ac,hw,sp,ann,al]=await Promise.all([
+      fetch(`${API}/student/${id}/attendance`,{headers:h}),
+      fetch(`${API}/student/${id}/academic`,{headers:h}),
+      fetch(`${API}/student/${id}/homework`,{headers:h}),
+      fetch(`${API}/student/${id}/sports`,{headers:h}),
+      fetch(`${API}/student/${id}/announcements`,{headers:h}),
+      fetch(`${API}/student/${id}/alerts`,{headers:h}),
+    ]);
+    if(a.ok)data.attendance=(await a.json()).attendance||[];
+    if(ac.ok)data.academic=(await ac.json()).reports||[];
+    if(hw.ok)data.homework=(await hw.json()).homework||[];
+    if(sp.ok)data.sports=(await sp.json()).assessments||[];
+    if(ann.ok)data.announce=(await ann.json()).announcements||[];
+    if(al.ok)data.alerts=(await al.json()).alerts||[];
+    // Load timetable
+    const classId = user?.class?.id || user?.classId || user?.class_id;
+    const schoolId = user?.school?.id || user?.schoolId || user?.school_id || selSchool?.id;
+    if(classId && schoolId){
+      try{
+        const tr=await fetch(`${API}/schools/${schoolId}/timetable?classId=${classId}`,{headers:h});
+        if(tr.ok)data.timetable=(await tr.json()).timetable||[];
+      }catch{}
+    }
+    renderTab(document.querySelector('.tab-pill.active')?.id?.replace('pill-','')||'home');
+  }catch{}
+}
+
+function showTab(t){
+  document.querySelectorAll('.tab-pill').forEach(p=>{
+    const tid=p.id.replace('pill-','');
+    p.classList.toggle('active',tid===t);
+    p.style.background=tid===t?TAB_COLORS[tid]:'';
+    p.style.color=tid===t?'#fff':'';
+    p.style.borderColor=tid===t?TAB_COLORS[tid]:'';
+  });
+  renderTab(t);
+}
+
+function renderTab(t){
+  const c=document.getElementById('dashContent');
+  const color=TAB_COLORS[t]||'#0C1F4A';
+  const labels={home:'Overview',attendance:'Attendance',academic:'Grades',homework:'Homework',sports:'Sports',announce:'News',alerts:'Alerts',timetable:'Timetable'};
+  const icons={home:'⊞',attendance:'📅',academic:'📚',homework:'📝',sports:'🏃',announce:'📢',alerts:'🚨',timetable:'🗓️'};
+
+  let html=`<div class="sec-head"><span class="sec-head-txt" style="color:${color}">${icons[t]} ${labels[t].toUpperCase()}</span><div class="sec-head-line" style="background:${color}"></div></div>`;
+
+  if(t==='home'){
+    html+=`<div class="stats-grid">
+      ${[
+        {lbl:'Attendance',count:data.attendance.length,color:'#1B5E3B',tab:'attendance'},
+        {lbl:'Grades',count:data.academic.length,color:'#0C1F4A',tab:'academic'},
+        {lbl:'Homework',count:data.homework.length,color:'#6D28D9',tab:'homework'},
+        {lbl:'Sports',count:data.sports.length,color:'#B45309',tab:'sports'},
+        {lbl:'News',count:data.announce.length,color:'#0E7490',tab:'announce'},
+        {lbl:'Alerts',count:data.alerts.length,color:'#B91C1C',tab:'alerts'},
+        {lbl:'Timetable',count:data.timetable.length,color:'#1D4ED8',tab:'timetable'},
+      ].map(s=>`<div class="stat-card" style="border-top-color:${s.color}" onclick="showTab('${s.tab}')"><div class="stat-count" style="color:${s.color}">${s.count}</div><div class="stat-label">${s.lbl}</div></div>`).join('')}
+    </div>`;
+  }
+  else if(t==='attendance'){
+    if(!data.attendance.length){html+=empty('📅','No attendance records yet.');}
+    else html+=data.attendance.map(r=>{
+      const sc=r.status==='present'?'#1B5E3B':r.status==='absent'?'#B91C1C':r.status==='late'?'#B45309':'#1D4ED8';
+      return `<div class="data-card" style="border-left-color:${sc}"><div style="flex:1"><div class="card-title">${r.date}</div><div class="card-sub">${r.class_name||''}</div></div><span class="badge" style="color:${sc};background:${sc}15;border-color:${sc}33">${(r.status||'').toUpperCase()}</span></div>`;
+    }).join('');
+  }
+  else if(t==='academic'){
+    if(!data.academic.length){html+=empty('📚','No academic reports yet.');}
+    else html+=data.academic.map(r=>`<div class="data-card" style="border-left-color:#0C1F4A"><div style="flex:1"><div class="card-title">${r.subject}</div><div class="card-sub">${r.term||''}</div>${r.remarks?`<div class="card-note">${r.remarks}</div>`:''}</div><div class="grade-box"><div class="grade-num">${r.score||'-'}</div><div class="grade-letter">${r.grade||''}</div></div></div>`).join('');
+  }
+  else if(t==='homework'){
+    if(!data.homework.length){html+=empty('📝','No homework posted yet.');}
+    else html+=data.homework.map(r=>`<div class="data-card" style="border-left-color:#6D28D9"><div style="flex:1"><div class="card-title">${r.subject}</div><div class="card-sub">Due: ${r.due_date||'No date set'}</div>${r.description?`<div class="card-note">${r.description}</div>`:''}</div></div>`).join('');
+  }
+  else if(t==='sports'){
+    if(!data.sports.length){html+=empty('🏃','No sports assessments yet.');}
+    else html+=data.sports.map(r=>{
+      const rc=r.rating==='excellent'?'#1B5E3B':r.rating==='good'?'#0C1F4A':r.rating==='average'?'#B45309':'#B91C1C';
+      return `<div class="data-card" style="border-left-color:#B45309"><div style="flex:1"><div class="card-title">${r.sport_label||r.sport||''}</div><div class="card-sub">${r.term||''} · ${r.assessment_date||''}</div>${r.notes?`<div class="card-note">${r.notes}</div>`:''}</div><span class="badge" style="color:${rc};background:${rc}15;border-color:${rc}33">${(r.rating||'').replace('_',' ').toUpperCase()}</span></div>`;
+    }).join('');
+  }
+  else if(t==='announce'){
+    if(!data.announce.length){html+=empty('📢','No announcements yet.');}
+    else html+=data.announce.map(r=>`<div class="data-card" style="border-left-color:#0E7490"><div style="flex:1"><div class="card-title">${r.text||''}</div><div class="card-sub">${(r.created_at||'').slice(0,10)}</div></div></div>`).join('');
+  }
+  else if(t==='alerts'){
+    if(!data.alerts.length){html+=empty('🚨','No alerts from school.');}
+    else html+=data.alerts.map(r=>`<div class="data-card" style="border-left-color:#B91C1C"><div style="flex:1"><div class="card-title">${r.title||''}</div>${r.description?`<div class="card-note">${r.description}</div>`:''}<div class="card-sub">${(r.created_at||'').slice(0,10)}</div></div></div>`).join('');
+  }
+
+  else if(t==='timetable'){
+    if(!data.timetable.length){html+=empty('🗓️','No timetable set up yet.');}
+    else{
+      const days=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+      const grouped={};
+      data.timetable.forEach(e=>{if(!grouped[e.day])grouped[e.day]=[];grouped[e.day].push(e);});
+      days.filter(d=>grouped[d]).forEach(day=>{
+        html+=`<div style="font-size:12px;font-weight:700;color:#1D4ED8;padding:8px 12px;background:#DBEAFE;border-radius:10px;margin-bottom:8px;border:1px solid #BFDBFE">${day}</div>`;
+        grouped[day].forEach(e=>{
+          html+=`<div class="data-card" style="border-left-color:#1D4ED8;margin-bottom:6px">
+            <div style="width:64px;text-align:center;flex-shrink:0;border-right:1px solid var(--border);padding-right:12px;margin-right:4px">
+              <div style="font-size:12px;font-weight:700;color:#1D4ED8">${e.start_time}</div>
+              <div style="font-size:10px;color:var(--grey)">${e.end_time}</div>
+            </div>
+            <div style="flex:1">
+              <div class="card-title">${e.subject}</div>
+              <div class="card-sub">${e.teacher?e.teacher:''}${e.room?' · '+e.room:''}</div>
+            </div>
+          </div>`;
+        });
+      });
+    }
+  }
+
+  html+='<div style="height:48px"></div>';
+  c.innerHTML=html;
+}
+
+function empty(icon,msg){return `<div class="empty-state"><div class="empty-icon">${icon}</div><div class="empty-txt">${msg}</div></div>`;}
+
+window.onload=()=>{if(!loadSession()){}}
+</script>
+</body>
+</html>
